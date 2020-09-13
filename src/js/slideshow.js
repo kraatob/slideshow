@@ -24,9 +24,7 @@ export default class Slideshow {
 
   start() {
     this._chooseNextImage()
-    this.interval = setInterval(() => {
-      this._chooseNextImage()
-    }, this.delay)
+    this._advance()
   }
 
   useCurrentImage() {
@@ -38,6 +36,15 @@ export default class Slideshow {
       }
     }, [])
     return currentImage
+  }
+
+  async _advance() {
+    const image = await this.nextImagePromise
+    this._setImage(image)
+    this._chooseNextImage()
+    setTimeout(() => {
+      this._advance()
+    }, this.delay)
   }
 
   _chooseNextImage() {
@@ -56,12 +63,14 @@ export default class Slideshow {
   }
 
   _loadImage(file) {
-    const reader  = new FileReader()
-    reader.onload = ({ target }) => {
-			const image = new Image(file, target.result)
-			this._setImage(image)
-		}
-		reader.readAsDataURL(file)
+    this.nextImagePromise = new Promise((resolve) => {
+      const reader  = new FileReader()
+      reader.onload = ({ target }) => {
+        const image = new Image(file, target.result)
+        resolve(image)
+      }
+      reader.readAsDataURL(file)
+    })
   }
 
 	_setImage(image) {
