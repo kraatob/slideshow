@@ -6,7 +6,6 @@ import { FileInputComponent } from './input_components'
 import Slideshow from './slideshow'
 
 export default function SlideshowStarterComponent({ startSlideshow }) {
-  console.log(startSlideshow)
   const [slideshowSettings, setSlideshowSettings] = useState({})
 
   const valid = !!slideshowSettings.files

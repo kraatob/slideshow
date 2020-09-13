@@ -5,6 +5,10 @@ class Image {
     this.file = file
     this.asDataUrl = asDataUrl
   }
+
+  get key() {
+    return this.file.webkitRelativePath
+  }
 }
 
 export default class Slideshow {
@@ -40,7 +44,7 @@ export default class Slideshow {
       this.remainingImages = [...this.images]
     }
     if (this.remainingImages.length > 0) {
-      const randomIndex = Math.floor(Math.random(this.remainingImages.length))
+      const randomIndex = Math.floor(Math.random() * this.remainingImages.length)
       this._loadImage(this.remainingImages.splice(randomIndex, 1)[0])
     }
   }
