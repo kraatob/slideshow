@@ -12,10 +12,11 @@ class Image {
 }
 
 export default class Slideshow {
-  constructor({ files }) {
-    this.images = this._filterFiles(files)
+  constructor({ files, delay, shuffle }) {
+    this.images = this._filterFiles(files).sort()
     this.remainingImages = []
-    this.delay = 6000
+    this.delay = delay
+    this.shuffle = shuffle
 
     this.currentImageSetters = []
     this.start()
@@ -44,8 +45,13 @@ export default class Slideshow {
       this.remainingImages = [...this.images]
     }
     if (this.remainingImages.length > 0) {
-      const randomIndex = Math.floor(Math.random() * this.remainingImages.length)
-      this._loadImage(this.remainingImages.splice(randomIndex, 1)[0])
+      let index
+      if (this.shuffle) {
+        index = Math.floor(Math.random() * this.remainingImages.length)
+      } else {
+        index = 0
+      }
+      this._loadImage(this.remainingImages.splice(index, 1)[0])
     }
   }
 

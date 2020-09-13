@@ -6,16 +6,14 @@ function getUniqueId() {
   return `input-${idCounter++}`
 }
 
-export function FileInputComponent({ directory, filesChosen }) {
+export function FileInputComponent({ directory, binding }) {
   const [numberOfFilesChosen, setNumberOfFilesChosen] = useState(0)
 
   const id = getUniqueId()
 
   function onInput({ target }) {
     setNumberOfFilesChosen(target.files.length)
-    if (filesChosen) {
-      filesChosen(target.files)
-    }
+    binding.value = target.files
   }
 
   return <div className="form-group">
@@ -28,5 +26,23 @@ export function FileInputComponent({ directory, filesChosen }) {
         }
       </label>
     </div>
+  </div>
+}
+
+export function TextInputComponent({ binding, label }) {
+  const id = getUniqueId()
+
+  return <div className="form-group">
+    <label htmlFor={ id }>{ label }</label>
+    <input type="text" className="form-control" id={ id } value={ binding.value } onChange={ ({ target }) => binding.value = target.value }/>
+  </div>
+}
+
+export function CheckboxComponent({ binding, label }) {
+  const id = getUniqueId()
+
+  return <div className="form-check">
+    <input type="checkbox" className="form-check-input" id={ id } checked={ binding.value } onChange={ ({ target }) => binding.value = target.checked }/>
+    <label className="form-check-label" htmlFor={ id }>{ label }</label>
   </div>
 }

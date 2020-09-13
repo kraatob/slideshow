@@ -1,12 +1,53 @@
 import React, { useState, useEffect } from 'react'
 
 import LayoutComponent from './layout_component'
-import { FileInputComponent } from './input_components'
+import { TextInputComponent, CheckboxComponent, FileInputComponent } from './input_components'
 
 import Slideshow from './slideshow'
 
+const defaults = {
+  delay: 6000,
+  shuffle: true,
+}
+
+function noop(value) {
+  return value
+}
+
+function deepBinder(baseValue, setBaseValue) {
+  function forKey(key, { serialize, deserialize } = {}) {
+    serialize = serialize || noop
+    deserialize = deserialize || noop
+    return {
+      get value() {
+        return serialize(baseValue[key])
+      },
+      set value(value) {
+        setBaseValue({ ...baseValue, [key]: deserialize(value) })
+      },
+    }
+  }
+
+  return {
+    forKey(key) {
+      return forKey(key)
+    },
+    forNumberKey(key) {
+      return forKey(key, {
+        serialize(value) {
+          return '' + value
+        },
+        deserialize(string) {
+          return Number(string)
+        }
+      })
+    }
+  }
+}
+
+
 export default function SlideshowStarterComponent({ startSlideshow }) {
-  const [slideshowSettings, setSlideshowSettings] = useState({})
+  const [slideshowSettings, setSlideshowSettings] = useState(defaults)
 
   const valid = !!slideshowSettings.files
 
@@ -15,10 +56,14 @@ export default function SlideshowStarterComponent({ startSlideshow }) {
     startSlideshow(new Slideshow(slideshowSettings))
   }
 
+  const binder = deepBinder(slideshowSettings, setSlideshowSettings)
+
   return <LayoutComponent>
     <form onSubmit={ onSubmit }>
-      <FileInputComponent directory="true" filesChosen={ (files) => setSlideshowSettings({ ...slideshowSettings, files }) } />
-      <button type="submit" className="btn btn-primary" disabled={ !valid }>Start slideshow</button>
+      <FileInputComponent directory="true" binding={ binder.forKey('files') } />
+      <TextInputComponent label="Delay" binding={ binder.forNumberKey('delay') } />
+      <CheckboxComponent label="Shuffle" binding={ binder.forKey('shuffle') } />
+      <button type="submit" className="btn btn-primary mt-3" disabled={ !valid }>Start slideshow</button>
     </form>
   </LayoutComponent>
 }
