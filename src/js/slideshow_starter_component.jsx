@@ -8,6 +8,7 @@ import Slideshow from './slideshow'
 const defaults = {
   delay: 6000,
   shuffle: true,
+  autoAdvance: true,
 }
 
 function noop(value) {
@@ -63,6 +64,7 @@ export default function SlideshowStarterComponent({ startSlideshow }) {
       <FileInputComponent directory="true" binding={ binder.forKey('files') } />
       <TextInputComponent label="Delay" binding={ binder.forNumberKey('delay') } />
       <CheckboxComponent label="Shuffle" binding={ binder.forKey('shuffle') } />
+      <CheckboxComponent label="Auto-advance" binding={ binder.forKey('autoAdvance') } />
       <button type="submit" className="btn btn-primary mt-3" disabled={ !valid }>Start slideshow</button>
     </form>
   </LayoutComponent>

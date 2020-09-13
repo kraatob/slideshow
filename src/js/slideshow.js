@@ -12,11 +12,12 @@ class Image {
 }
 
 export default class Slideshow {
-  constructor({ files, delay, shuffle }) {
+  constructor({ files, delay, shuffle, autoAdvance }) {
     this.images = this._filterFiles(files).sort()
     this.remainingImages = []
     this.delay = delay
     this.shuffle = shuffle
+    this.autoAdvance = autoAdvance
 
     this.currentImageSetters = []
     this.start()
@@ -24,7 +25,7 @@ export default class Slideshow {
 
   start() {
     this._chooseNextImage()
-    this._advance()
+    this.advance()
   }
 
   useCurrentImage() {
@@ -38,13 +39,19 @@ export default class Slideshow {
     return currentImage
   }
 
-  async _advance() {
+  async advance() {
+    if (this.currentTimeout) {
+      clearTimeout(this.currentTimeout)
+    }
     const image = await this.nextImagePromise
     this._setImage(image)
     this._chooseNextImage()
-    setTimeout(() => {
-      this._advance()
-    }, this.delay)
+    if (this.autoAdvance) {
+      this.currentTimeout = setTimeout(() => {
+        this.currentTimeout = undefined
+        this.advance()
+      }, this.delay)
+    }
   }
 
   _chooseNextImage() {

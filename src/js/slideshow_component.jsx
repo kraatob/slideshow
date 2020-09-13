@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import KeyboardEventHandler from 'react-keyboard-event-handler'
 
 function FadeInOut(props) {
   return <CSSTransition
@@ -13,6 +14,9 @@ export default function SlideshowComponent({ slideshow, endSlideshow }) {
   const currentImage = slideshow.useCurrentImage()
 
   return <div className="slideshow">
+    <KeyboardEventHandler
+      handleKeys={['space']}
+      onKeyEvent={() => slideshow.advance() } />
     <TransitionGroup component={ null }>
       { currentImage && 
         <FadeInOut key={ currentImage.key }>
